@@ -333,7 +333,7 @@ namespace CsvMerger
             Console.WriteLine("File Successfully created\n" +
                 "\n" +
                 "Press any key to terminate.");
-            Console.ReadLine();
+            Console.ReadKey();
             System.Environment.Exit(1);
         }
     }
