@@ -162,7 +162,7 @@ namespace CsvMerger
 
             }
 
-            Console.WriteLine("Welcome to the .arff generator tool, this tool is used to merge disparate data sets \n" +
+            Console.WriteLine("Welcome to the .csv generator tool, this tool is used to merge disparate data sets \n" +
                 "into a .arff file for use in the Weka data analysis program.");
 
             Console.WriteLine("\n Please specify the name of the dataset you would like to create \n" +
