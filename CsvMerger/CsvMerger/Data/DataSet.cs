@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CsvMerger
+namespace CsvMerger.Data
 {
     class DataSet
     {
