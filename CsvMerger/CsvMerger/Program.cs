@@ -34,6 +34,8 @@ namespace CsvMerger
             decimal rowProccessed = 0.0m;
             decimal percentDone = 0.0m;
 
+            Console.WriteLine($"{0.00}% Done");
+
             foreach (var ds in dataSets)
             {
                 using (StreamReader lineCounter = new StreamReader(ds.FilePath))
@@ -58,16 +60,9 @@ namespace CsvMerger
                     Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
                     var attributes = CSVParser.Split(row);
 
-                    for (int i = 0; i < attributes.Length; i++)
+                    foreach(var r in ds.MapRules)
                     {
-                        var rules = ds.MapRules.Select(r => r).Where(r => r[0] == i);
-                        if (rules.Any())
-                        {
-                            foreach (var r in rules)
-                            {
-                                rowArray[r[1]] = attributes[i];
-                            }
-                        }
+                        rowArray[r[1]] = attributes[r[0]];
                     }
 
                     ResultDataSet.OutputRows.Add(string.Join(",", rowArray));
@@ -91,7 +86,6 @@ namespace CsvMerger
             foreach (var ds in dataSets)
             {
                 ds.Columns = File.ReadLines(ds.FilePath).First().Split(",");
-                //ds.Rows = File.ReadLines(ds.FilePath).Skip(1).ToArray();
             }
 
             return dataSets;
