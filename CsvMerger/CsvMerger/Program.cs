@@ -55,20 +55,12 @@ namespace CsvMerger
                         {
                             foreach (var r in rules)
                             {
-                                //var val = Regex.Unescape(attributes[i]);
-                                //val = Regex.Replace(val, "\"", "");
-                                //string val;
-                                //if (String.IsNullOrEmpty(attributes[i]))
-                                //{
-                                //    val = ""
-                                //}
-                                rowArray[r[1]] = attributes[i];//val;
+                                rowArray[r[1]] = attributes[i];
                             }
                         }
                     }
 
                     ResultDataSet.OutputRows.Add(string.Join(",", rowArray));
-                    //Console.Clear();
                     rowProccessed += 1;
                     var previousPercent = percentDone;
                     percentDone = Math.Floor((rowProccessed / rowCount) * 100);
@@ -282,7 +274,6 @@ namespace CsvMerger
                             Console.WriteLine($"Map [{ds.FileName}] column \"{c}\" --> [{outputDataSet.FileName}] column \"{oc}\"?");
                             Console.WriteLine("\n");
                             Console.WriteLine("[Y,N]?");
-                            //var input = Console.ReadLine().ToUpper();
                         }
 
                         var input = Console.ReadLine().ToUpper();
