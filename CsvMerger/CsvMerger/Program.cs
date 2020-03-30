@@ -9,7 +9,6 @@ namespace CsvMerger
 {
     class Program
     {
-
         public static bool ValidateSets(string filePath, string[] sets)
         {
             List<string> pathsToMergeFiles = new List<string>();
@@ -37,12 +36,23 @@ namespace CsvMerger
 
             foreach (var ds in dataSets)
             {
-                rowCount += ds.Rows.Length;
+                using (StreamReader lineCounter = new StreamReader(ds.FilePath))
+                {
+                    while(lineCounter.ReadLine() != null)
+                    {
+                        rowCount += 1;
+                    }
+                }
+                rowCount -= 1;
             }
 
-            foreach (var ds in dataSets)
+            foreach(var ds in dataSets)
             {
-                foreach (var row in ds.Rows)
+                string row;
+                StreamReader file = new StreamReader(ds.FilePath);
+                file.ReadLine();
+
+                while((row = file.ReadLine()) != null)
                 {
                     string[] rowArray = new string[ResultDataSet.Columns.Length];
                     Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
@@ -69,6 +79,7 @@ namespace CsvMerger
                         Console.WriteLine($"{percentDone}% Done");
                     }
                 }
+                file.Close();
             }
 
             return ResultDataSet;
@@ -80,7 +91,7 @@ namespace CsvMerger
             foreach (var ds in dataSets)
             {
                 ds.Columns = File.ReadLines(ds.FilePath).First().Split(",");
-                ds.Rows = File.ReadLines(ds.FilePath).Skip(1).ToArray();
+                //ds.Rows = File.ReadLines(ds.FilePath).Skip(1).ToArray();
             }
 
             return dataSets;
