@@ -11,6 +11,36 @@ namespace CsvMerger.Services.ServiceLayers
 {
     class Helper : IHelper
     {
+        private decimal GetJobCount(List<DataSet> dataSets)
+        {
+            decimal rowCount = 0.0m;
+
+            foreach (var ds in dataSets)
+            {
+                using (StreamReader lineCounter = new StreamReader(ds.FilePath))
+                {
+                    while (lineCounter.ReadLine() != null)
+                    {
+                        rowCount += 1;
+                    }
+                }
+                rowCount -= 1;
+            }
+
+            return rowCount;
+        }
+
+        private decimal PercentageCounter(decimal rowsProcessed, decimal rowCount, decimal previousPercent)
+        {
+            var percentDone = Math.Floor((rowsProcessed / rowCount) * 100);
+            if (previousPercent < percentDone)
+            {
+                Console.WriteLine($"{percentDone}% Done");
+            }
+
+            return percentDone;
+        }
+
         public  bool ValidateSets(string filePath, string[] sets)
         {
             List<string> pathsToMergeFiles = new List<string>();
@@ -32,23 +62,12 @@ namespace CsvMerger.Services.ServiceLayers
 
         public DataSet MapSets(List<DataSet> dataSets, DataSet ResultDataSet)
         {
-            decimal rowCount = 0.0m;
-            decimal rowProccessed = 0.0m;
+            decimal rowCount = GetJobCount(dataSets);
+            decimal rowsProccessed = 0.0m;
             decimal percentDone = 0.0m;
 
             Console.WriteLine($"{0.00}% Done");
 
-            foreach (var ds in dataSets)
-            {
-                using (StreamReader lineCounter = new StreamReader(ds.FilePath))
-                {
-                    while (lineCounter.ReadLine() != null)
-                    {
-                        rowCount += 1;
-                    }
-                }
-                rowCount -= 1;
-            }
 
             foreach (var ds in dataSets)
             {
@@ -68,13 +87,10 @@ namespace CsvMerger.Services.ServiceLayers
                     }
 
                     ResultDataSet.OutputRows.Add(string.Join(",", rowArray));
-                    rowProccessed += 1;
+                    rowsProccessed += 1;
                     var previousPercent = percentDone;
-                    percentDone = Math.Floor((rowProccessed / rowCount) * 100);
-                    if (percentDone > previousPercent)
-                    {
-                        Console.WriteLine($"{percentDone}% Done");
-                    }
+                    percentDone = PercentageCounter(rowsProccessed, rowCount, previousPercent);
+
                 }
                 file.Close();
             }
@@ -133,11 +149,7 @@ namespace CsvMerger.Services.ServiceLayers
                         output.WriteLine(row);
                         rowProccessed += 1;
 
-                        percentDone = Math.Floor((rowProccessed / rowCount) * 100);
-                        if (percentDone > previousPercent)
-                        {
-                            Console.WriteLine($"{percentDone}% Done");
-                        }
+                        percentDone = PercentageCounter(rowProccessed, rowCount, previousPercent);
                     }
                 }
             }
