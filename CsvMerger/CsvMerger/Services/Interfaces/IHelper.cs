@@ -6,13 +6,13 @@ using System.Text;
 
 namespace CsvMerger.Services.Interfaces
 {
-    interface IHelper
+    public interface IHelper
     {
         bool ValidateSets(string filePath, string[] sets);
-        bool DoesRuleExist(DataSet set, int rule);
-        DataSet MapSets(List<DataSet> dataSets, DataSet ResultDataSet);
-        List<DataSet> LoadDataSets(List<DataSet> dataSets);
+        bool DoesRuleExist(CsvSet set, int rule);
+        CsvSet MapSets(List<CsvSet> dataSets, CsvSet ResultDataSet);
+        List<CsvSet> LoadDataSets(List<CsvSet> dataSets);
         string FormatDataSetsList(IEnumerable<FileInfo> filenames);
-        void MakeFile(DataSet set);
+        void MakeFile(CsvSet set);
     }
 }

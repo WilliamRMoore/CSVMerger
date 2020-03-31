@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace CsvMerger
 {
-    class App
+    public class App
     {
 
         private readonly IHelper _helper;
@@ -20,8 +20,8 @@ namespace CsvMerger
 
         public void Run()
         {
-            DataSet outputDataSet = new DataSet();
-            List<DataSet> dataSets = new List<DataSet>();
+            CsvSet outputDataSet = new CsvSet();
+            List<CsvSet> dataSets = new List<CsvSet>();
             var path = Directory.GetCurrentDirectory();
             var dataSetsPath = path + @"\DataSets";
             string newDataSetName = "";
@@ -62,7 +62,7 @@ namespace CsvMerger
                 }
                 else
                 {
-                    DataSet dataSet = new DataSet();
+                    CsvSet dataSet = new CsvSet();
                     dataSet.FileName = newDataSetName;
 
                     Console.WriteLine("\nPlease List the Column Names seperated by commas.");
@@ -113,7 +113,7 @@ namespace CsvMerger
                 {
                     foreach (var s in sets)
                     {
-                        DataSet dataSet = new DataSet();
+                        CsvSet dataSet = new CsvSet();
                         dataSet.FileName = s;
                         dataSet.FilePath = dataSetsPath + $@"\{s}";
 

@@ -9,9 +9,9 @@ using System.Text.RegularExpressions;
 
 namespace CsvMerger.Services.ServiceLayers
 {
-    class Helper : IHelper
+    public class Helper : IHelper
     {
-        private decimal GetJobCount(List<DataSet> dataSets)
+        private decimal GetJobCount(List<CsvSet> dataSets)
         {
             decimal rowCount = 0.0m;
 
@@ -55,18 +55,18 @@ namespace CsvMerger.Services.ServiceLayers
             return true;
         }
 
-        public bool DoesRuleExist(DataSet set, int rule)
+        public bool DoesRuleExist(CsvSet set, int rule)
         {
             return set.MapRules.Any(r => r[1] == rule);
         }
 
-        public DataSet MapSets(List<DataSet> dataSets, DataSet ResultDataSet)
+        public CsvSet MapSets(List<CsvSet> dataSets, CsvSet ResultDataSet)
         {
             decimal rowCount = GetJobCount(dataSets);
             decimal rowsProccessed = 0.0m;
             decimal percentDone = 0.0m;
 
-            Console.WriteLine($"{0.00}% Done");
+            Console.WriteLine($"{0.00}% Done"); //move later
 
 
             foreach (var ds in dataSets)
@@ -99,7 +99,7 @@ namespace CsvMerger.Services.ServiceLayers
         }
 
 
-        public List<DataSet> LoadDataSets(List<DataSet> dataSets)
+        public List<CsvSet> LoadDataSets(List<CsvSet> dataSets)
         {
             foreach (var ds in dataSets)
             {
@@ -131,7 +131,7 @@ namespace CsvMerger.Services.ServiceLayers
             return outputFileList;
         }
 
-        public void MakeFile(DataSet set)
+        public void MakeFile(CsvSet set)
         {
             decimal rowCount = set.OutputRows.Count();
             decimal rowProccessed = 0.0m;

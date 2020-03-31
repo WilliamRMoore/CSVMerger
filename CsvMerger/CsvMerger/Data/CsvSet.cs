@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CsvMerger.Data
 {
-    class DataSet
+    public class CsvSet
     {
         public string[] Columns { get; set; }
         public string FileName { get; set; }
