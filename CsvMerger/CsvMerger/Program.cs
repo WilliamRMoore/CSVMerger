@@ -33,6 +33,7 @@ namespace CsvMerger
 
             // required to run the application
             services.AddTransient<App>();
+            services.AddScoped<IMapSetService, MapSetService>();
             services.AddScoped<IHelper, Helper>();
 
             return services;

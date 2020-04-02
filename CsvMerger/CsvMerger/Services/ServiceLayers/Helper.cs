@@ -11,6 +11,11 @@ namespace CsvMerger.Services.ServiceLayers
 {
     public class Helper : IHelper
     {
+        private readonly IMapSetService _mapSetService;
+        public Helper(IMapSetService mapSetService)
+        {
+            _mapSetService = mapSetService;
+        }
         private decimal GetJobCount(List<CsvSet> dataSets)
         {
             decimal rowCount = 0.0m;
@@ -62,40 +67,45 @@ namespace CsvMerger.Services.ServiceLayers
 
         public CsvSet MapSets(List<CsvSet> dataSets, CsvSet ResultDataSet)
         {
-            decimal rowCount = GetJobCount(dataSets);
-            decimal rowsProccessed = 0.0m;
-            decimal percentDone = 0.0m;
+            return _mapSetService.MapSets(dataSets, ResultDataSet);
+            //decimal rowCount = GetJobCount(dataSets);
+            //decimal rowsProccessed = 0.0m;
+            //decimal percentDone = 0.0m;
 
-            Console.WriteLine($"{0.00}% Done"); //move later
+            //Console.WriteLine($"{0.00}% Done"); //move later
 
 
-            foreach (var ds in dataSets)
-            {
-                string row;
-                StreamReader file = new StreamReader(ds.FilePath);
-                file.ReadLine();
+            //foreach (var ds in dataSets)
+            //{
+            //    string row;
+            //    StreamReader file = new StreamReader(ds.FilePath);
+            //    file.ReadLine();
 
-                while ((row = file.ReadLine()) != null)
-                {
-                    string[] rowArray = new string[ResultDataSet.Columns.Length];
-                    Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
-                    var attributes = CSVParser.Split(row);
+            //    while ((row = file.ReadLine()) != null)
+            //    {
+            //        string[] resultArray = new string[ResultDataSet.Columns.Length];//creates row of equal length to columns, this row will be mapped to from feeding sets.
+            //        var attributes = _mapSetService.RowSplitter(row);
+            //        resultArray = _mapSetService.RuleLooper(ds.MapRules, attributes, resultArray);
+            //        //Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+            //        //var attributes = CSVParser.Split(row);
 
-                    foreach (var r in ds.MapRules)
-                    {
-                        rowArray[r[1]] = attributes[r[0]];
-                    }
+            //        //foreach (var r in ds.MapRules)
+            //        //{
+            //        //    resultArray[r[1]] = attributes[r[0]];
+            //        //}
 
-                    ResultDataSet.OutputRows.Add(string.Join(",", rowArray));
-                    rowsProccessed += 1;
-                    var previousPercent = percentDone;
-                    percentDone = PercentageCounter(rowsProccessed, rowCount, previousPercent);
 
-                }
-                file.Close();
-            }
 
-            return ResultDataSet;
+            //        ResultDataSet.OutputRows.Add(string.Join(",", resultArray));
+            //        rowsProccessed += 1;
+            //        var previousPercent = percentDone;
+            //        percentDone = PercentageCounter(rowsProccessed, rowCount, previousPercent);
+
+            //    }
+            //    file.Close();
+            //}
+
+            //return ResultDataSet;
         }
 
 
