@@ -43,6 +43,31 @@ namespace CsvMerger.test
         }
 
         [Fact]
+        public void ValidateRowSplitter_ReturnsTrue()
+        {
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());
+            string testString = "Hello,World";
+
+            var sut = fixture.Create<MapSetService>();
+
+            var stringArray = sut.RowSplitter(testString);
+
+            //foreach(var s in stringArray)
+            //{
+            //    Console.WriteLine(s);
+            //}
+
+            bool result = false;
+
+            if (stringArray.Length > 0)
+            {
+                result = true;
+            }
+
+            Assert.True(result);
+        }
+
+        [Fact]
         public void ValidatesSets_ReturnsTrue()
         {
             var fixture = new Fixture().Customize(new AutoMoqCustomization());

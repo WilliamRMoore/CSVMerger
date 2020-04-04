@@ -8,7 +8,28 @@ using System.Text.RegularExpressions;
 
 namespace CsvMerger.Services.ServiceLayers
 {
-    class MapSetService : IMapSetService
+    public interface IFileStreamProvider
+    {
+        StreamReader GetStream(string filePath);
+        bool IsFilePathValid(string filePath);
+    }
+    public class FileStreamProvider : IFileStreamProvider
+    {
+        public FileStreamProvider()
+        {
+
+        }
+        public StreamReader GetStream(string filePath)
+        {
+            return new StreamReader(filePath);
+        }
+
+        public bool IsFilePathValid(string filePath)
+        {
+            return File.Exists(filePath);
+        }
+    }
+    public class MapSetService : IMapSetService
     {
         PercentageCounter percentageCounter = new PercentageCounter();
 
@@ -61,7 +82,7 @@ namespace CsvMerger.Services.ServiceLayers
             return rowCount;
         }
 
-        public List<string> FileLineReader(string filePath, string[] rowArray, List<int[]> rules)
+        public List<string> FileLineReader(string filePath, string[] resultArray, List<int[]> mappingRules)
         {//Potentially problematic.
             List<string> fileRows = new List<string>();
             string[] attributes;
@@ -73,9 +94,11 @@ namespace CsvMerger.Services.ServiceLayers
 
             for (long i = count; i > 0; i--)
             {
+                //Business logic here
                 attributes = RowSplitter(file.ReadLine());
-                rowArray = RowMapper(rules, attributes, rowArray);
-                fileRows.Add(string.Join(",", rowArray));
+                resultArray = RowMapper(mappingRules, attributes, resultArray);
+                fileRows.Add(string.Join(",", resultArray));
+                //End of business logic.
                 percentageCounter.CalcPercent();
             }
 
@@ -83,13 +106,13 @@ namespace CsvMerger.Services.ServiceLayers
             return fileRows;
         }
 
-        public List<string> CsvSetLooper(List<CsvSet> csvSets)
+        public List<string> CsvSetLooper(List<CsvSet> csvSets, int ResultSetSize)
         {
             List<string> outputRows = new List<string>();
 
             foreach(var csv in csvSets)
             {
-                string[] resultArray = new string[csv.Columns.Length];
+                string[] resultArray = new string[ResultSetSize];
                 outputRows.AddRange(FileLineReader(csv.FilePath,resultArray,csv.MapRules));
             }
 
@@ -99,7 +122,7 @@ namespace CsvMerger.Services.ServiceLayers
         public CsvSet MapSets(List<CsvSet> csvSets, CsvSet resultCsvSet)
         {
             percentageCounter.TotalItems = GetJobCount(csvSets);
-            resultCsvSet.OutputRows = CsvSetLooper(csvSets);
+            resultCsvSet.OutputRows = CsvSetLooper(csvSets,resultCsvSet.Columns.Length);
             return resultCsvSet;
         }
 
