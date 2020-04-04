@@ -33,11 +33,13 @@ namespace CsvMerger
 
             // required to run the application
             services.AddTransient<App>();
+            services.AddSingleton<IPercentageCounter, PercentageCounter>();
             services.AddScoped<IMapSetService, MapSetService>();
             services.AddScoped<IHelper, Helper>();
             services.AddScoped<IRowProcessor, RowProcessor>();
             services.AddScoped<IFileLineReader, FileLineReader>();
             services.AddScoped<IFileStreamProvider, FileStreamProvider>();
+            
 
             return services;
         }

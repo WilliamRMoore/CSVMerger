@@ -4,11 +4,15 @@ using System.Text;
 
 namespace CsvMerger.Services.ServiceLayers
 {
-    public class PercentageCounter
+    public interface IPercentageCounter
+    {
+        void CalcPercent();
+    }
+    public class PercentageCounter : IPercentageCounter
     {
         public decimal TotalItems { get; set; }
         private decimal processedItems;
-        public PercentageCounter()
+        public PercentageCounter(/*Add ILogger here*/)
         {
             Console.WriteLine("0% Done");
         }

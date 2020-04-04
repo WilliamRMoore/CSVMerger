@@ -28,17 +28,29 @@ namespace CsvMerger.test
         }
 
         [Fact]
-        public void CountLines_UsesFileProvider()
+        public void CountLines_UsesFileProvider_ReturnsExpectedRowCount()
         {
+            //Use autoFixture to create mocks for these interfaces.
             var mockFileStreamProvider = _fixture.Freeze<Mock<IFileStreamProvider>>();
             var mockRowProcessor = _fixture.Freeze<Mock<IRowProcessor>>();
+
+            //Use autoFixture to create the FileLineReader so it automatically gets the interfaces
+            //the constructor is expecting.
             var sut = _fixture.Create<FileLineReader>();
 
+            //Setup the mock method to return a fake stream.
             mockFileStreamProvider
                 .Setup(m => m.GetStream(It.IsAny<string>()))
                 .Returns(() => new StreamReader(FakeMemoryStream()));
 
+            //Exercise the sut
             var result = sut.CountLines("");
+
+            mockFileStreamProvider
+                .Verify(m => m.GetStream(It.IsAny<string>()), Times.Exactly(1));
+
+            mockRowProcessor
+                .Verify(m => m.RowSplitter(It.IsAny<string>()), Times.Never);
 
             Assert.Equal(1, result);
         }
