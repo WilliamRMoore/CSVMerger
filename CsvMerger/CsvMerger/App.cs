@@ -115,7 +115,7 @@ namespace CsvMerger
                     {
                         CsvSet dataSet = new CsvSet();
                         dataSet.FileName = s;
-                        dataSet.FilePath = dataSetsPath + $@"\{s}";
+                        dataSet.InputFilePath = dataSetsPath + $@"\{s}";
 
                         dataSets.Add(dataSet);
                     }
@@ -197,7 +197,7 @@ namespace CsvMerger
                 }
                 else
                 {
-                    outputDataSet.FilePath = outPutDirectory;
+                    outputDataSet.InputFilePath = outPutDirectory;
                     _helper.MakeFile(outputDataSet);
                     break;
                 }

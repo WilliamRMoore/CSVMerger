@@ -22,7 +22,7 @@ namespace CsvMerger.Services.ServiceLayers
 
             foreach (var ds in dataSets)
             {
-                using (StreamReader lineCounter = new StreamReader(ds.FilePath))
+                using (StreamReader lineCounter = new StreamReader(ds.InputFilePath))
                 {
                     while (lineCounter.ReadLine() != null)
                     {
@@ -113,7 +113,7 @@ namespace CsvMerger.Services.ServiceLayers
         {
             foreach (var ds in dataSets)
             {
-                ds.Columns = File.ReadLines(ds.FilePath).First().Split(",");
+                ds.Columns = File.ReadLines(ds.InputFilePath).First().Split(",");
             }
 
             return dataSets;
@@ -149,7 +149,7 @@ namespace CsvMerger.Services.ServiceLayers
 
             try
             {
-                using (StreamWriter output = new StreamWriter(set.FilePath + "\\" + set.FileName + ".csv"))
+                using (StreamWriter output = new StreamWriter(set.InputFilePath + "\\" + set.FileName + ".csv"))
                 {
                     output.WriteLine(String.Join(",", set.Columns));
 

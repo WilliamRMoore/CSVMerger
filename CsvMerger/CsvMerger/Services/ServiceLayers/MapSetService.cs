@@ -8,67 +8,76 @@ using System.Text.RegularExpressions;
 
 namespace CsvMerger.Services.ServiceLayers
 {
-    public interface IFileStreamProvider
-    {
-        StreamReader GetStream(string filePath);
-        bool IsFilePathValid(string filePath);
-    }
-    public class FileStreamProvider : IFileStreamProvider
-    {
-        public FileStreamProvider()
-        {
+    //public interface IFileStreamProvider
+    //{
+    //    StreamReader GetStream(string filePath);
+    //    bool IsFilePathValid(string filePath);
+    //}
+    //public class FileStreamProvider : IFileStreamProvider
+    //{
+    //    public FileStreamProvider()
+    //    {
 
-        }
-        public StreamReader GetStream(string filePath)
-        {
-            return new StreamReader(filePath);
-        }
+    //    }
+    //    public StreamReader GetStream(string filePath)
+    //    {
+    //        return new StreamReader(filePath);
+    //    }
 
-        public bool IsFilePathValid(string filePath)
-        {
-            return File.Exists(filePath);
-        }
-    }
+    //    public bool IsFilePathValid(string filePath)
+    //    {
+    //        return File.Exists(filePath);
+    //    }
+    //}
     public class MapSetService : IMapSetService
     {
         PercentageCounter percentageCounter = new PercentageCounter();
 
-        public string[] RowSplitter(string row)
+        private readonly IFileLineReader _fileLineReader;
+
+        public MapSetService(IFileLineReader fileLineReader)
         {
-            Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
-            var attributes = CSVParser.Split(row);
-            return attributes;
+            _fileLineReader = fileLineReader;
         }
 
-        public string[] RowMapper(List<int[]> rules, string[] attributes, string[] resultArray)
-        {
-            foreach(var rule in rules)
-            {
-                resultArray[rule[1]] = attributes[rule[0]];
-            }
+        public delegate void CalcPercent();
 
-            return resultArray;
-        }
+        //public string[] RowSplitter(string row)
+        //{
+        //    Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+        //    var attributes = CSVParser.Split(row);
+        //    return attributes;
+        //}
 
-        public StreamReader GetFileStream(string filePath)
-        {
-            StreamReader file = new StreamReader(filePath);
-            return file;
-        }
+        //public string[] RowMapper(List<int[]> rules, string[] attributes, string[] resultArray)
+        //{
+        //    foreach(var rule in rules)
+        //    {
+        //        resultArray[rule[1]] = attributes[rule[0]];
+        //    }
 
-        public long CountLinesInFile(StreamReader file)
-        {
-            long count = 0;
-            file.ReadLine();
+        //    return resultArray;
+        //}
 
-            while(file.EndOfStream != true)
-            {
-                count += 1;
-                file.ReadLine();
-            }
+        //public StreamReader GetFileStream(string filePath)
+        //{
+        //    StreamReader file = new StreamReader(filePath);
+        //    return file;
+        //}
 
-            return count;
-        }
+        //public long CountLinesInFile(StreamReader file)
+        //{
+        //    long count = 0;
+        //    file.ReadLine();
+
+        //    while(file.EndOfStream != true)
+        //    {
+        //        count += 1;
+        //        file.ReadLine();
+        //    }
+
+        //    return count;
+        //}
 
         private long GetJobCount(List<CsvSet> dataSets)
         {
@@ -76,44 +85,46 @@ namespace CsvMerger.Services.ServiceLayers
 
             foreach (var ds in dataSets)
             {
-                rowCount += CountLinesInFile(GetFileStream(ds.FilePath));
+                //rowCount += CountLinesInFile(GetFileStream(ds.FilePath));
+                rowCount += _fileLineReader.CountLines(ds.InputFilePath);
             }
 
             return rowCount;
         }
 
-        public List<string> FileLineReader(string filePath, string[] resultArray, List<int[]> mappingRules)
-        {//Potentially problematic.
-            List<string> fileRows = new List<string>();
-            string[] attributes;
-            var file = GetFileStream(filePath);
-            var count = CountLinesInFile(file);
-            file.DiscardBufferedData();
-            file.BaseStream.Seek(0, SeekOrigin.Begin);
-            file.ReadLine();
+        //public List<string> FileLineReader(string filePath, string[] resultArray, List<int[]> mappingRules)
+        //{//Potentially problematic.
+        //    List<string> fileRows = new List<string>();
+        //    string[] attributes;
+        //    var file = GetFileStream(filePath);
+        //    var count = CountLinesInFile(file);
+        //    file.DiscardBufferedData();
+        //    file.BaseStream.Seek(0, SeekOrigin.Begin);
+        //    file.ReadLine();
 
-            for (long i = count; i > 0; i--)
-            {
-                //Business logic here
-                attributes = RowSplitter(file.ReadLine());
-                resultArray = RowMapper(mappingRules, attributes, resultArray);
-                fileRows.Add(string.Join(",", resultArray));
-                //End of business logic.
-                percentageCounter.CalcPercent();
-            }
+        //    for (long i = count; i > 0; i--)
+        //    {
+        //        //Business logic here
+        //        attributes = RowSplitter(file.ReadLine());
+        //        resultArray = RowMapper(mappingRules, attributes, resultArray);
+        //        fileRows.Add(string.Join(",", resultArray));
+        //        //End of business logic.
+        //        percentageCounter.CalcPercent();
+        //    }
 
-            file.Close();
-            return fileRows;
-        }
+        //    file.Close();
+        //    return fileRows;
+        //}
 
         public List<string> CsvSetLooper(List<CsvSet> csvSets, int ResultSetSize)
         {
             List<string> outputRows = new List<string>();
+            CalcPercent calcPercent = percentageCounter.CalcPercent;
 
             foreach(var csv in csvSets)
             {
                 string[] resultArray = new string[ResultSetSize];
-                outputRows.AddRange(FileLineReader(csv.FilePath,resultArray,csv.MapRules));
+                outputRows.AddRange(_fileLineReader.LineReader(csv.InputFilePath, resultArray, csv.MapRules, calcPercent));
             }
 
             return outputRows;

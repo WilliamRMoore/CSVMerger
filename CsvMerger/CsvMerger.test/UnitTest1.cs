@@ -38,8 +38,6 @@ namespace CsvMerger.test
             var result = sut.DoesRuleExist(csvSetTotest, 1);
 
             Assert.True(result);
-
-            //var dat = new CsvSet();
         }
 
         [Fact]
@@ -48,18 +46,38 @@ namespace CsvMerger.test
             var fixture = new Fixture().Customize(new AutoMoqCustomization());
             string testString = "Hello,World";
 
-            var sut = fixture.Create<MapSetService>();
+            var sut = fixture.Create<RowProcessor>();
 
             var stringArray = sut.RowSplitter(testString);
 
-            //foreach(var s in stringArray)
-            //{
-            //    Console.WriteLine(s);
-            //}
-
             bool result = false;
 
-            if (stringArray.Length > 0)
+            if (stringArray[0].Equals("Hello") && stringArray[1].Equals("World"))
+            {
+                result = true;
+            }
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void ValidateRowMapper_ReturnsTrue()
+        {
+            var fixture = new Fixture().Customize(new AutoMoqCustomization());
+            var rules = new List<int[]>();
+            int[] rule = { 0, 1 };
+            int[] rule2 = { 1, 0 };
+            rules.Add(rule);
+            rules.Add(rule2);
+            string[] attributes = { "these", "are", "the", "attributes" };
+            string[] resultArray = new string[2];
+            bool result = false;
+
+            var sut = fixture.Create<RowProcessor>();
+
+            resultArray = sut.RowMapper(rules, attributes, resultArray);
+
+            if(resultArray[0].Equals("are") && resultArray[1].Equals("these"))
             {
                 result = true;
             }
