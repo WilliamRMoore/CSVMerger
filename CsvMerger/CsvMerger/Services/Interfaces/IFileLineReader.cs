@@ -8,6 +8,6 @@ namespace CsvMerger.Services.Interfaces
     public interface IFileLineReader
     {
         long CountLines(string filePath);
-        List<string> LineReader(string filePath, string[] resultArray, List<int[]> mappingRules, CalcPercent calcPercent);
+        List<string> LineReader(string filePath, string[] resultArray, List<int[]> mappingRules);
     }
 }

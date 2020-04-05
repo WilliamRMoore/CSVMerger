@@ -12,14 +12,15 @@ namespace CsvMerger.Services.ServiceLayers
     {
         private readonly IFileStreamProvider _fileStreamProvider;
         private readonly IRowProcessor _rowProcessor;
+        private readonly IPercentageCounter _percentageCounter;
 
-        public FileLineReader(IFileStreamProvider fileStreamProvider, IRowProcessor rowProcessor)
+        public FileLineReader(IFileStreamProvider fileStreamProvider, IRowProcessor rowProcessor, IPercentageCounter percentageCounter)
         {
             _fileStreamProvider = fileStreamProvider;
             _rowProcessor = rowProcessor;
+            _percentageCounter = percentageCounter;
         }
 
-        //TODO write unit test
         public long CountLines(string filePath)
         {
             var reader = _fileStreamProvider.GetStream(filePath);
@@ -38,7 +39,7 @@ namespace CsvMerger.Services.ServiceLayers
         }
 
         //TODO inject IPercentCalc
-        public List<string> LineReader(string filePath, string[] resultArray, List<int[]> mappingRules, CalcPercent calcPercent)
+        public List<string> LineReader(string filePath, string[] resultArray, List<int[]> mappingRules)
         {
             List<string> resultFileRows = new List<string>();
             string[] attributes;
@@ -51,7 +52,7 @@ namespace CsvMerger.Services.ServiceLayers
                 attributes = _rowProcessor.RowSplitter(file.ReadLine());
                 resultArray = _rowProcessor.RowMapper(mappingRules, attributes, resultArray);
                 resultFileRows.Add(string.Join(",", resultArray));
-                calcPercent();
+                _percentageCounter.CalcPercent();
             }
 
             file.Close();

@@ -55,5 +55,43 @@ namespace CsvMerger.test
             Assert.Equal(1, result);
         }
 
+        [Fact]
+        public void LineReader_CallsExpectedInterfaces()
+        {
+            //Use autoFixture to create mocks for these interfaces.
+            var mockFileStreamProvider = _fixture.Freeze<Mock<IFileStreamProvider>>();
+            var mockRowProcessor = _fixture.Freeze<Mock<IRowProcessor>>();
+            var mockPercentageCounter = _fixture.Freeze<Mock<IPercentageCounter>>();
+
+            //Use autoFixture to create the FileLineReader so it automatically gets the interfaces
+            //the constructor is expecting.
+            var sut = _fixture.Create<FileLineReader>();
+
+            //Setup the mock method to return a fake stream.
+            mockFileStreamProvider
+                .Setup(m => m.GetStream(It.IsAny<string>()))
+                .Returns(() => new StreamReader(FakeMemoryStream()));
+
+            var filePath = _fixture.Create<string>();
+            var stringArr = _fixture.Create<string[]>();
+            var rules = _fixture.CreateMany<int[]>().ToList();
+
+            //Exercise the sut
+            var result = sut.LineReader(filePath, stringArr, rules);
+
+            //Called twice: once for countlines, once to get stream for loop
+            mockFileStreamProvider
+                .Verify(m => m.GetStream(It.IsAny<string>()), Times.Exactly(2));
+
+            mockRowProcessor
+                .Verify(m => m.RowSplitter(It.IsAny<string>()), Times.Once);
+
+            mockRowProcessor
+                .Verify(m => m.RowMapper(It.IsAny<List<int[]>>(), It.IsAny<string[]>(), It.IsAny<string[]>()), Times.Once);
+
+            mockPercentageCounter
+                .Verify(m => m.CalcPercent(), Times.Once);
+
+        }
     }
 }
