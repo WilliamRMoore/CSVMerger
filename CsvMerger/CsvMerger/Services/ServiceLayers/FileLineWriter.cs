@@ -10,14 +10,17 @@ namespace CsvMerger.Services.ServiceLayers
     public class FileLineWriter : IFileLineWriter
     {
         private readonly IPercentageCounter _percentageCounter;
+        private readonly IFileStreamProvider _fileStream;
 
-        public FileLineWriter(IPercentageCounter percentageCounter)
+        public FileLineWriter(IPercentageCounter percentageCounter, IFileStreamProvider fileStream)
         {
             _percentageCounter = percentageCounter;
+            _fileStream = fileStream;
         }
 
-        public void WriteLines(StreamWriter fileWriter, CsvSet outputSet)
+        public void WriteLines(string outputFilePath, CsvSet outputSet)
         {
+            var fileWriter = _fileStream.GetWriteStream(outputFilePath);
             using (fileWriter)
             {
                 fileWriter.WriteLine(String.Join(",", outputSet.Columns));

@@ -12,6 +12,7 @@ namespace CsvMerger.Services.ServiceLayers
         {
             Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
             var attributes = CSVParser.Split(row);
+
             return attributes;
         }
 

@@ -10,13 +10,11 @@ namespace CsvMerger.Services.ServiceLayers
     public class MakeFile : IMakeFile
     {
         private readonly IPercentageCounter _percentageCounter;
-        private readonly IFileStreamProvider _fileStream;
         private readonly IFileLineWriter _fileLineWriter;
 
-        public MakeFile(IPercentageCounter percentageCounter, IFileStreamProvider fileStream, IFileLineWriter fileLineWriter)
+        public MakeFile(IPercentageCounter percentageCounter, IFileLineWriter fileLineWriter)
         {
             _percentageCounter = percentageCounter;
-            _fileStream = fileStream;
             _fileLineWriter = fileLineWriter;
         }
 
@@ -24,8 +22,7 @@ namespace CsvMerger.Services.ServiceLayers
         {
             set.OutpuFilePath = set.InputFilePath + "\\" + set.FileName + ".csv"; //This should be done when rpgram receives input
             _percentageCounter.SetTotalItems(set.OutputRows.Count());
-            var file = _fileStream.GetWriteStream(set.OutpuFilePath);
-            _fileLineWriter.WriteLines(file, set);
+            _fileLineWriter.WriteLines(set.OutpuFilePath, set);
         }
     }
 }

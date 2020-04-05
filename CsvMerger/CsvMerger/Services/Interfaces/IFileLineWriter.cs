@@ -8,6 +8,6 @@ namespace CsvMerger.Services.Interfaces
 {
     public interface IFileLineWriter
     {
-        void WriteLines(StreamWriter fileWriter, CsvSet outputSet);
+        void WriteLines(string outputFilePath, CsvSet outputSet);
     }
 }

@@ -40,14 +40,14 @@ namespace CsvMerger.test
 
             //Setup the mock method to return a fake stream.
             mockFileStreamProvider
-                .Setup(m => m.GetStream(It.IsAny<string>()))
+                .Setup(m => m.GetReadStream(It.IsAny<string>()))
                 .Returns(() => new StreamReader(FakeMemoryStream()));
 
             //Exercise the sut
             var result = sut.CountLines("");
 
             mockFileStreamProvider
-                .Verify(m => m.GetStream(It.IsAny<string>()), Times.Exactly(1));
+                .Verify(m => m.GetReadStream(It.IsAny<string>()), Times.Exactly(1));
 
             mockRowProcessor
                 .Verify(m => m.RowSplitter(It.IsAny<string>()), Times.Never);
@@ -69,7 +69,7 @@ namespace CsvMerger.test
 
             //Setup the mock method to return a fake stream.
             mockFileStreamProvider
-                .Setup(m => m.GetStream(It.IsAny<string>()))
+                .Setup(m => m.GetReadStream(It.IsAny<string>()))
                 .Returns(() => new StreamReader(FakeMemoryStream()));
 
             var filePath = _fixture.Create<string>();
@@ -81,7 +81,7 @@ namespace CsvMerger.test
 
             //Called twice: once for countlines, once to get stream for loop
             mockFileStreamProvider
-                .Verify(m => m.GetStream(It.IsAny<string>()), Times.Exactly(2));
+                .Verify(m => m.GetReadStream(It.IsAny<string>()), Times.Exactly(2));
 
             mockRowProcessor
                 .Verify(m => m.RowSplitter(It.IsAny<string>()), Times.Once);
