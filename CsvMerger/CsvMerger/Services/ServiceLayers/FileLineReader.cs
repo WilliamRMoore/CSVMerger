@@ -23,7 +23,7 @@ namespace CsvMerger.Services.ServiceLayers
 
         public long CountLines(string filePath)
         {
-            var reader = _fileStreamProvider.GetStream(filePath);
+            var reader = _fileStreamProvider.GetReadStream(filePath);
             long count = 0;
             reader.ReadLine();
 
@@ -43,7 +43,7 @@ namespace CsvMerger.Services.ServiceLayers
         {
             List<string> resultFileRows = new List<string>();
             string[] attributes;
-            var file = _fileStreamProvider.GetStream(filePath);
+            var file = _fileStreamProvider.GetReadStream(filePath);
             var lineCount = CountLines(filePath);
             file.ReadLine();
 

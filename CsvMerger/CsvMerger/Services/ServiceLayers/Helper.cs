@@ -12,38 +12,12 @@ namespace CsvMerger.Services.ServiceLayers
     public class Helper : IHelper
     {
         private readonly IMapSetService _mapSetService;
-        public Helper(IMapSetService mapSetService)
+        private readonly IMakeFile _makeFile;
+
+        public Helper(IMapSetService mapSetService, IMakeFile makeFile)
         {
             _mapSetService = mapSetService;
-        }
-        private decimal GetJobCount(List<CsvSet> dataSets)
-        {
-            decimal rowCount = 0.0m;
-
-            foreach (var ds in dataSets)
-            {
-                using (StreamReader lineCounter = new StreamReader(ds.InputFilePath))
-                {
-                    while (lineCounter.ReadLine() != null)
-                    {
-                        rowCount += 1;
-                    }
-                }
-                rowCount -= 1;
-            }
-
-            return rowCount;
-        }
-
-        private decimal PercentageCounter(decimal rowsProcessed, decimal rowCount, decimal previousPercent)
-        {
-            var percentDone = Math.Floor((rowsProcessed / rowCount) * 100);
-            if (previousPercent < percentDone)
-            {
-                Console.WriteLine($"{percentDone}% Done");
-            }
-
-            return percentDone;
+            _makeFile = makeFile;
         }
 
         public  bool ValidateSets(string filePath, string[] sets)
@@ -104,30 +78,7 @@ namespace CsvMerger.Services.ServiceLayers
 
         public void MakeFile(CsvSet set)
         {
-            decimal rowCount = set.OutputRows.Count();
-            decimal rowProccessed = 0.0m;
-            decimal percentDone = 0.0m;
-
-            try
-            {
-                using (StreamWriter output = new StreamWriter(set.InputFilePath + "\\" + set.FileName + ".csv"))
-                {
-                    output.WriteLine(String.Join(",", set.Columns));
-
-                    foreach (var row in set.OutputRows)
-                    {
-                        var previousPercent = percentDone;
-                        output.WriteLine(row);
-                        rowProccessed += 1;
-
-                        percentDone = PercentageCounter(rowProccessed, rowCount, previousPercent);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            _makeFile.MakeOutputFile(set);
         }
 
     }

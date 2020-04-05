@@ -7,7 +7,8 @@ namespace CsvMerger.Services.Interfaces
 {
     public interface IFileStreamProvider
     {
-        StreamReader GetStream(string filePath);
+        StreamReader GetReadStream(string filePath);
+        StreamWriter GetWriteStream(string filePath);
         bool IsFilePathValid(string filePath);
     }
 }

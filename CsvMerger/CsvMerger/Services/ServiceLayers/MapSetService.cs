@@ -29,7 +29,6 @@ namespace CsvMerger.Services.ServiceLayers
 
             foreach (var ds in dataSets)
             {
-                //rowCount += CountLinesInFile(GetFileStream(ds.FilePath));
                 rowCount += _fileLineReader.CountLines(ds.InputFilePath);
             }
 
@@ -51,7 +50,7 @@ namespace CsvMerger.Services.ServiceLayers
 
         public CsvSet MapSets(List<CsvSet> csvSets, CsvSet resultCsvSet)
         {
-            _percentageCounter.TotalItems = GetJobCount(csvSets);
+            _percentageCounter.SetTotalItems(GetJobCount(csvSets));
             resultCsvSet.OutputRows = CsvSetLooper(csvSets,resultCsvSet.Columns.Length);
             return resultCsvSet;
         }

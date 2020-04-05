@@ -12,9 +12,14 @@ namespace CsvMerger.Services.ServiceLayers
         {
 
         }
-        public StreamReader GetStream(string filePath)
+        public StreamReader GetReadStream(string filePath)
         {
             return new StreamReader(filePath);
+        }
+
+        public StreamWriter GetWriteStream(string filePath)
+        {
+            return new StreamWriter(filePath);
         }
 
         public bool IsFilePathValid(string filePath)

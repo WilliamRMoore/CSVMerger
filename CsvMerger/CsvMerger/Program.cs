@@ -39,6 +39,8 @@ namespace CsvMerger
             services.AddScoped<IRowProcessor, RowProcessor>();
             services.AddScoped<IFileLineReader, FileLineReader>();
             services.AddScoped<IFileStreamProvider, FileStreamProvider>();
+            services.AddScoped<IFileLineWriter, FileLineWriter>();
+            services.AddScoped<IMakeFile, MakeFile>();
             
 
             return services;

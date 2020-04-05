@@ -6,16 +6,23 @@ namespace CsvMerger.Services.ServiceLayers
 {
     public interface IPercentageCounter
     {
-        decimal TotalItems { get; set; }
+        //decimal TotalItems { get; set; }
+        void SetTotalItems(decimal totalItems);
         void CalcPercent();
     }
     public class PercentageCounter : IPercentageCounter
     {
-        public decimal TotalItems { get; set; }
+        private decimal TotalItems;
         private decimal processedItems;
         public PercentageCounter(/*Add ILogger here*/)
         {
             Console.WriteLine("0% Done");
+        }
+
+        public void SetTotalItems(decimal totalItems)
+        {
+            processedItems = 0;
+            TotalItems = totalItems;
         }
 
         public void CalcPercent()
