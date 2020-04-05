@@ -34,7 +34,7 @@ namespace CsvMerger.test
                 .With(p => p.MapRules, rules)
                 .Create();
 
-            var sut = fixture.Create<Helper>();
+            var sut = fixture.Create<ServiceoOchestrator>();
             var result = sut.DoesRuleExist(csvSetTotest, 1);
 
             Assert.True(result);
@@ -90,7 +90,7 @@ namespace CsvMerger.test
         {
             var fixture = new Fixture().Customize(new AutoMoqCustomization());
 
-            var moqHelper = fixture.Freeze<Mock<IHelper>>();
+            var moqHelper = fixture.Freeze<Mock<IServiceOrchestrator>>();
 
             moqHelper.Setup(m => m.ValidateSets(It.IsAny<string>(), It.IsAny<string[]>())).Returns(true);
             var result = moqHelper.Object.ValidateSets("stuff", new string[] { "stuff" });

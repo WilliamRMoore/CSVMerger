@@ -20,9 +20,6 @@ namespace CsvMerger.Services.ServiceLayers
             _percentageCounter = percentageCounter;
         }
 
-        //public delegate void CalcPercent();
-
-
         private long GetJobCount(List<CsvSet> dataSets)
         {
             long rowCount = 0;

@@ -9,12 +9,12 @@ using System.Text.RegularExpressions;
 
 namespace CsvMerger.Services.ServiceLayers
 {
-    public class Helper : IHelper
+    public class ServiceoOchestrator : IServiceOrchestrator
     {
         private readonly IMapSetService _mapSetService;
         private readonly IMakeFile _makeFile;
 
-        public Helper(IMapSetService mapSetService, IMakeFile makeFile)
+        public ServiceoOchestrator(IMapSetService mapSetService, IMakeFile makeFile)
         {
             _mapSetService = mapSetService;
             _makeFile = makeFile;

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CsvMerger.Services.Interfaces
 {
-    public interface IHelper
+    public interface IServiceOrchestrator
     {
         bool ValidateSets(string filePath, string[] sets);
         bool DoesRuleExist(CsvSet set, int rule);

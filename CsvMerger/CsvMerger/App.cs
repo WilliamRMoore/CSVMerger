@@ -12,10 +12,10 @@ namespace CsvMerger
     public class App
     {
 
-        private readonly IHelper _helper;
-        public App(IHelper helper)
+        private readonly IServiceOrchestrator _ServiceOrchestrator;
+        public App(IServiceOrchestrator helper)
         {
-            _helper = helper;
+            _ServiceOrchestrator = helper;
         }
 
         public void Run()
@@ -88,12 +88,13 @@ namespace CsvMerger
                     break;
                 }
             }
-
+//--------------------------------------------------------------------------------------------------------------------------
+            
             var dataSetsContents = new DirectoryInfo(dataSetsPath);
             Console.WriteLine("Current Contents of DataSets folder\n");
             var filenames = dataSetsContents.EnumerateFiles();
 
-            var fileList = _helper.FormatDataSetsList(filenames);// FormatDataSetsList(filenames);
+            var fileList = _ServiceOrchestrator.FormatDataSetsList(filenames);// FormatDataSetsList(filenames);
 
             Console.WriteLine(fileList);
 
@@ -109,7 +110,7 @@ namespace CsvMerger
 
                 var sets = mergeSets.Split(",");
 
-                if (_helper.ValidateSets(dataSetsPath, sets))
+                if (_ServiceOrchestrator.ValidateSets(dataSetsPath, sets))
                 {
                     foreach (var s in sets)
                     {
@@ -131,8 +132,10 @@ namespace CsvMerger
 
             } while (true);
 
-            dataSets = _helper.LoadDataSets(dataSets);
+            dataSets = _ServiceOrchestrator.LoadDataSets(dataSets);
 
+//--------------------------------------------------------------------------------------------------------------------------
+            
             foreach (var ds in dataSets)
             {
                 Console.Clear();
@@ -142,7 +145,7 @@ namespace CsvMerger
                 {
                     foreach (var oc in outputDataSet.Columns)
                     {
-                        if (_helper.DoesRuleExist(ds, Array.IndexOf(outputDataSet.Columns, oc)))
+                        if (_ServiceOrchestrator.DoesRuleExist(ds, Array.IndexOf(outputDataSet.Columns, oc)))
                         {
                             continue;
                         }
@@ -181,7 +184,9 @@ namespace CsvMerger
                 }
             }
 
-            outputDataSet = _helper.MapSets(dataSets, outputDataSet);
+//--------------------------------------------------------------------------------------------------------------------------
+           
+            outputDataSet = _ServiceOrchestrator.MapSets(dataSets, outputDataSet);
 
             Console.WriteLine("\nData is ready to be coppied into file format.");
 
@@ -198,7 +203,7 @@ namespace CsvMerger
                 else
                 {
                     outputDataSet.InputFilePath = outPutDirectory;
-                    _helper.MakeFile(outputDataSet);
+                    _ServiceOrchestrator.MakeFile(outputDataSet);
                     break;
                 }
             }
