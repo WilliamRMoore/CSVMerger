@@ -1,5 +1,6 @@
 ﻿using CsvMerger.Data;
 using CsvMerger.Services.Interfaces;
+using CsvMerger.Services.ServiceLayers.TuiRoutines.InitialDataInput;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,9 +14,12 @@ namespace CsvMerger
     {
 
         private readonly IServiceOrchestrator _ServiceOrchestrator;
-        public App(IServiceOrchestrator helper)
+        private readonly IInitialDataInput _initialDataInput;
+
+        public App(IServiceOrchestrator orchestrator,IInitialDataInput initialDataInput)
         {
-            _ServiceOrchestrator = helper;
+            _ServiceOrchestrator = orchestrator;
+            _initialDataInput = initialDataInput;
         }
 
         public void Run()
@@ -24,7 +28,6 @@ namespace CsvMerger
             List<CsvSet> dataSets = new List<CsvSet>();
             var path = Directory.GetCurrentDirectory();
             var dataSetsPath = path + @"\DataSets";
-            string newDataSetName = "";
 
             bool directoryExists = Directory.Exists(path + @"\DataSets");
             if (!directoryExists)
@@ -37,57 +40,24 @@ namespace CsvMerger
                 {
                     Console.WriteLine(e.Message);
                 }
-
             }
 
-            Console.WriteLine("Welcome to the .csv generator tool, this tool is used to merge disparate data sets \n" +
-                "into a .arff file for use in the Weka data analysis program.");
+            _initialDataInput.Welcome();
 
-            Console.WriteLine("\n Please specify the name of the dataset you would like to create \n" +
-                "***WARNING DO NOT INCLUDE FILE EXTENSION IN NAME***\n" +
-                "***WARNING DO NOT INCLUDE THE FOLLOWING CHARACTERS IN THE FILE NAME***\n" +
-                "* . \" / \\ [ ] : ; | ,\n");
+            var newSetName = _initialDataInput.GetNewDatasetName();
 
-            Console.Write("New DataSet Name --> ");
+            outputDataSet.FileName = newSetName;
 
-            Regex regex1 = new Regex(@"^[a-zA-Z0-9_]+$");
-            while (true)
-            {
-                newDataSetName = Console.ReadLine();
+            var columns = _initialDataInput.GetColumnNames();
 
-                if (!regex1.IsMatch(newDataSetName))
-                {
-                    Console.WriteLine("Please make sure your dataset name does not contain illegal characters.\n");
-                    Console.Write("New DataSet Name -->");
-                }
-                else
-                {
-                    CsvSet dataSet = new CsvSet();
-                    dataSet.FileName = newDataSetName;
+            outputDataSet.Columns = columns;
 
-                    Console.WriteLine("\nPlease List the Column Names seperated by commas.");
-                    var columnNames = Console.ReadLine();
-                    dataSet.Columns = columnNames.Split(",");
-                    Console.WriteLine($"\nA data set with the name of {dataSet.FileName} containing the columns {columnNames} \n" +
-                        $"will be generated. Do you wish to continue?");
-                    Console.WriteLine("\n[Y/N]?");
-                    while (true)
-                    {
-                        var input = Console.ReadLine().ToUpper();
-                        if (input.Equals("Y"))
-                        {
-                            Console.Clear();
-                            outputDataSet = dataSet;
-                            break;
-                        }
-                        else if (input.Equals("N"))
-                        {
-                            System.Environment.Exit(1);
-                        }
-                    }
-                    break;
-                }
-            }
+            var outputDirectory = _initialDataInput.GetTargetDirectory();
+
+            outputDataSet.OutpuFilePath = outputDirectory + "\\" + outputDataSet.FileName + ".csv";//check this
+
+            _initialDataInput.AskUserIfDataIsCorrect(outputDataSet.FileName, string.Join(",", outputDataSet.Columns));
+
 //--------------------------------------------------------------------------------------------------------------------------
             
             var dataSetsContents = new DirectoryInfo(dataSetsPath);
@@ -190,28 +160,14 @@ namespace CsvMerger
 
             Console.WriteLine("\nData is ready to be coppied into file format.");
 
-            while (true)
-            {
-                Console.WriteLine("\nPlease input the Directory where you would like the file to be output.");
-                var outPutDirectory = Console.ReadLine();
-                if (!Directory.Exists(outPutDirectory))
-                {
-                    Console.Beep();
-                    Console.WriteLine("\nInvalid Directory." +
-                        "\nPlease ensure that the directoy exists and is spelled correctly.");
-                }
-                else
-                {
-                    outputDataSet.InputFilePath = outPutDirectory;
-                    _ServiceOrchestrator.MakeFile(outputDataSet);
-                    break;
-                }
-            }
+            _ServiceOrchestrator.MakeFile(outputDataSet);
 
             Console.WriteLine("File Successfully created\n" +
                 "\n" +
                 "Press any key to terminate.");
+
             Console.ReadKey();
+
             System.Environment.Exit(1);
         }
     }

@@ -9,6 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using CsvMerger.Services.Interfaces;
 using CsvMerger.Services.ServiceLayers;
+using CsvMerger.Services.ServiceLayers.TuiRoutines;
+using CsvMerger.Services.ServiceLayers.TuiRoutines.InitialDataInput;
+using CsvMerger.Services.ServiceLayers.TuiInterfaces;
 
 namespace CsvMerger
 {
@@ -41,6 +44,9 @@ namespace CsvMerger
             services.AddScoped<IFileStreamProvider, FileStreamProvider>();
             services.AddScoped<IFileLineWriter, FileLineWriter>();
             services.AddScoped<IMakeFile, MakeFile>();
+            services.AddScoped<IUserInputValidator, UserInputValidator>();
+            services.AddScoped<IInitialDataInput, InitialDataInput>();
+            services.AddScoped<IUXTextOutput, UXTextOutput>();
             
 
             return services;

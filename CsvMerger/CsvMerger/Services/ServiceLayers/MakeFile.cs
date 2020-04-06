@@ -20,7 +20,7 @@ namespace CsvMerger.Services.ServiceLayers
 
         public void MakeOutputFile(CsvSet set)
         {
-            set.OutpuFilePath = set.InputFilePath + "\\" + set.FileName + ".csv"; //This should be done when rpgram receives input
+            //set.OutpuFilePath = set.InputFilePath + "\\" + set.FileName + ".csv"; //This should be done when rpgram receives input
             _percentageCounter.SetTotalItems(set.OutputRows.Count());
             _fileLineWriter.WriteLines(set.OutpuFilePath, set);
         }
