@@ -20,9 +20,12 @@ namespace CsvMerger.Services.ServiceLayers
 
         public void WriteLines(string outputFilePath, CsvSet outputSet)
         {
+            //Writes each line from the output csv set to the target location (outputFilePath). 
             var fileWriter = _fileStream.GetWriteStream(outputFilePath);
+
             using (fileWriter)
             {
+                //One-liner for writing the column headers at the top of the file.
                 fileWriter.WriteLine(String.Join(",", outputSet.Columns));
 
                 foreach (var row in outputSet.OutputRows)

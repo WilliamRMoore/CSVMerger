@@ -44,8 +44,9 @@ namespace CsvMerger.Services.ServiceLayers
             return _mapSetService.MapSets(dataSets, ResultDataSet);
         }
 
-        public List<CsvSet> LoadDataSets(List<CsvSet> dataSets)
+        public List<CsvSet> LoadDataSetsColumns(List<CsvSet> dataSets)
         {
+            //Gets the column headers for each csvSet.
             foreach (var ds in dataSets)
             {
                 ds.Columns = File.ReadLines(ds.InputFilePath).First().Split(",");

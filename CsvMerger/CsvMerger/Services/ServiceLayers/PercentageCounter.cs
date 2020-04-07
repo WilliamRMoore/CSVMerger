@@ -6,7 +6,6 @@ namespace CsvMerger.Services.ServiceLayers
 {
     public interface IPercentageCounter
     {
-        //decimal TotalItems { get; set; }
         void SetTotalItems(decimal totalItems);
         void CalcPercent();
     }
@@ -15,9 +14,11 @@ namespace CsvMerger.Services.ServiceLayers
         private decimal TotalItems;
         private decimal processedItems;
         private decimal previousPercent;
-        public PercentageCounter(/*Add ILogger here*/)
+        private readonly IResultsAndTime resultsAndTime;
+
+        public PercentageCounter(/*Add ILogger here*/ IResultsAndTime resultsAndTime)
         {
-           
+            this.resultsAndTime = resultsAndTime;
         }
 
         public void SetTotalItems(decimal totalItems)
@@ -30,18 +31,26 @@ namespace CsvMerger.Services.ServiceLayers
         public void CalcPercent()
         {
             processedItems++;
-            //var previousPercent = Math.Floor(((processedItems - 1) / TotalItems) * 100);
             var percentDone = Math.Floor((processedItems / TotalItems) * 100);
 
-            if(processedItems == 1)
+            if (processedItems == 1)
             {
                 Console.WriteLine("0% Done");
+                resultsAndTime.StartTimer();
             }
 
-            if(previousPercent < percentDone)
+            if (previousPercent < percentDone)
             {
                 Console.WriteLine($"{percentDone}% Done");
                 previousPercent = percentDone;
+            }
+
+            if (percentDone == 100)
+            {
+                var time = resultsAndTime.GetTimeSpan();
+                resultsAndTime.StopAndResetTimer();
+
+                Console.WriteLine($"Job completed with {processedItems} records processed in {time.TotalSeconds} seconds.");
             }
         }
     }

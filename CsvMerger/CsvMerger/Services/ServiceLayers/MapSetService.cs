@@ -12,24 +12,17 @@ namespace CsvMerger.Services.ServiceLayers
     public class MapSetService : IMapSetService
     {
         private readonly IPercentageCounter _percentageCounter;
+        private readonly IJobCounter jobCounter;
+        private readonly ITimeEstimator timeEstimator;
         private readonly IFileLineReader _fileLineReader;
 
-        public MapSetService(IFileLineReader fileLineReader, IPercentageCounter percentageCounter)
+        public MapSetService(IFileLineReader fileLineReader, IPercentageCounter percentageCounter,
+            IJobCounter jobCounter, ITimeEstimator timeEstimator)
         {
             _fileLineReader = fileLineReader;
             _percentageCounter = percentageCounter;
-        }
-
-        private long GetJobCount(List<CsvSet> dataSets)
-        {
-            long rowCount = 0;
-
-            foreach (var ds in dataSets)
-            {
-                rowCount += _fileLineReader.CountLines(ds.InputFilePath);
-            }
-
-            return rowCount;
+            this.jobCounter = jobCounter;
+            this.timeEstimator = timeEstimator;
         }
 
         public List<string> CsvSetLooper(List<CsvSet> csvSets, int ResultSetSize)
@@ -47,7 +40,8 @@ namespace CsvMerger.Services.ServiceLayers
 
         public CsvSet MapSets(List<CsvSet> csvSets, CsvSet resultCsvSet)
         {
-            _percentageCounter.SetTotalItems(GetJobCount(csvSets));
+            _percentageCounter.SetTotalItems(jobCounter.GetJobCount(csvSets));
+            timeEstimator.EstimateTime(csvSets);
             resultCsvSet.OutputRows = CsvSetLooper(csvSets,resultCsvSet.Columns.Length);
             return resultCsvSet;
         }

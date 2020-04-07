@@ -47,6 +47,9 @@ namespace CsvMerger
             services.AddScoped<IUserInputValidator, UserInputValidator>();
             services.AddScoped<IInitialDataInput, InitialDataInput>();
             services.AddScoped<IUXTextOutput, UXTextOutput>();
+            services.AddScoped<IResultsAndTime, ResultsAndTime>();
+            services.AddScoped<IJobCounter, JobCounter>();
+            services.AddScoped<ITimeEstimator, TimeEstimator>();
             
 
             return services;

@@ -11,7 +11,7 @@ namespace CsvMerger.Services.Interfaces
         bool ValidateSets(string filePath, string[] sets);
         bool DoesRuleExist(CsvSet set, int rule);
         CsvSet MapSets(List<CsvSet> dataSets, CsvSet ResultDataSet);
-        List<CsvSet> LoadDataSets(List<CsvSet> dataSets);
+        List<CsvSet> LoadDataSetsColumns(List<CsvSet> dataSets);
         string FormatDataSetsList(IEnumerable<FileInfo> filenames);
         void MakeFile(CsvSet set);
     }
