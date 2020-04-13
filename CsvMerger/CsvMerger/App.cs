@@ -102,7 +102,7 @@ namespace CsvMerger
 
             } while (true);
 
-            dataSets = _ServiceOrchestrator.LoadDataSets(dataSets);
+            dataSets = _ServiceOrchestrator.LoadDataSetsColumns(dataSets);
 
 //--------------------------------------------------------------------------------------------------------------------------
             
